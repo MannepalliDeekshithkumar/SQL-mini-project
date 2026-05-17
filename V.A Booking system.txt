@@ -1,0 +1,499 @@
+mysql> show databases;
++--------------------+
+| Database           |
++--------------------+
+| da1                |
+| information_schema |
+| instagram_clone_db |
+| instgram_clone_db  |
+| jfs1               |
+| mysql              |
+| performance_schema |
+| pfs1               |
+| sakila             |
+| sys                |
+| virtualarena_db    |
+| world              |
++--------------------+
+12 rows in set (0.03 sec)
+
+mysql> use  virtualarena_db;
+Database changed
+mysql> CREATE DATABASE IF NOT EXISTS virtualarena_db;
+Query OK, 1 row affected, 1 warning (0.02 sec)
+
+mysql> 
+mysql> USE virtualarena_db;
+Database changed
+mysql> 
+mysql> CREATE TABLE Gamers (
+    ->     gamer_id INT AUTO_INCREMENT PRIMARY KEY,
+    ->     gamer_name VARCHAR(100) NOT NULL,
+    ->     gamer_email VARCHAR(100) UNIQUE,
+    ->     gamer_city VARCHAR(50),
+    ->     joined_date DATE
+    -> );
+ERROR 1050 (42S01): Table 'gamers' already exists
+mysql> 
+mysql> CREATE TABLE Game_Categories (
+    ->     category_id INT AUTO_INCREMENT PRIMARY KEY,
+    ->     category_name VARCHAR(50) NOT NULL
+    -> );
+ERROR 1050 (42S01): Table 'game_categories' already exists
+mysql> 
+mysql> CREATE TABLE Gaming_Systems (
+    ->     system_id INT AUTO_INCREMENT PRIMARY KEY,
+    ->     system_name VARCHAR(100) NOT NULL,
+    ->     brand_name VARCHAR(50),
+    ->     hourly_price DECIMAL(10,2),
+    ->     available_units INT,
+    ->     category_id INT,
+    -> 
+    ->     FOREIGN KEY (category_id)
+    ->     REFERENCES Game_Categories(category_id)
+    -> );
+ERROR 1050 (42S01): Table 'gaming_systems' already exists
+mysql> 
+mysql> CREATE TABLE Staff (
+    ->     staff_id INT AUTO_INCREMENT PRIMARY KEY,
+    ->     staff_name VARCHAR(100),
+    ->     role_name VARCHAR(50),
+    ->     experience_years INT
+    -> );
+ERROR 1050 (42S01): Table 'staff' already exists
+mysql> 
+mysql> CREATE TABLE Bookings (
+    ->     booking_id INT AUTO_INCREMENT PRIMARY KEY,
+    ->     gamer_id INT,
+    ->     system_id INT,
+    ->     staff_id INT,
+    ->     booking_date DATE,
+    ->     hours_booked INT,
+    ->     total_amount DECIMAL(10,2),
+    -> 
+    ->     FOREIGN KEY (gamer_id)
+    ->     REFERENCES Gamers(gamer_id),
+    -> 
+    ->     FOREIGN KEY (system_id)
+    ->     REFERENCES Gaming_Systems(system_id),
+    -> 
+    ->     FOREIGN KEY (staff_id)
+    ->     REFERENCES Staff(staff_id)
+    -> );
+ERROR 1050 (42S01): Table 'bookings' already exists
+mysql> 
+mysql> CREATE TABLE Payments (
+    ->     payment_id INT AUTO_INCREMENT PRIMARY KEY,
+    ->     booking_id INT,
+    ->     payment_method VARCHAR(50),
+    ->     payment_status VARCHAR(50),
+    -> 
+    ->     FOREIGN KEY (booking_id)
+    ->     REFERENCES Bookings(booking_id)
+    -> );
+ERROR 1050 (42S01): Table 'payments' already exists
+mysql> 
+mysql> CREATE TABLE Feedback (
+    ->     feedback_id INT AUTO_INCREMENT PRIMARY KEY,
+    ->     gamer_id INT,
+    ->     system_id INT,
+    ->     rating INT,
+    ->     review_message VARCHAR(200),
+    -> 
+    ->     FOREIGN KEY (gamer_id)
+    ->     REFERENCES Gamers(gamer_id),
+    -> 
+    ->     FOREIGN KEY (system_id)
+    ->     REFERENCES Gaming_Systems(system_id)
+    -> );
+ERROR 1050 (42S01): Table 'feedback' already exists
+mysql> 
+mysql> INSERT INTO Gamers
+    -> (gamer_name, gamer_email, gamer_city, joined_date)
+    -> VALUES
+    -> ('Deekshith Kumar', 'deekshith@gmail.com', 'Hyderabad', '2024-01-10'),
+    -> ('Sangeetha Reddy', 'sangeetha@yahoo.com', 'Chennai', '2024-02-18'),
+    -> ('Sunny Gowtham', 'sunny@outlook.com', 'Bangalore', '2024-03-12'),
+    -> ('Ravi Varma', 'ravi@gmail.com', 'Pune', '2024-04-05'),
+    -> ('Vidhyanjali', 'vidhyanjali@gmail.com', 'Vizag', '2024-04-25');
+ERROR 1062 (23000): Duplicate entry 'deekshith@gmail.com' for key 'gamers.gamer_email'
+mysql> 
+mysql> INSERT INTO Game_Categories
+    -> (category_name)
+    -> VALUES
+    -> ('PlayStation'),
+    -> ('PC Gaming'),
+    -> ('Racing'),
+    -> ('VR Gaming'),
+    -> ('Arcade'),
+    -> ('Xbox');
+Query OK, 6 rows affected (0.01 sec)
+Records: 6  Duplicates: 0  Warnings: 0
+
+mysql> 
+mysql> INSERT INTO Gaming_Systems
+    -> (system_name, brand_name, hourly_price,
+    -> available_units, category_id)
+    -> VALUES
+    -> ('PS5 Arena', 'Sony', 250.00, 10, 1),
+    -> ('Gaming Beast PC', 'Asus', 300.00, 8, 2),
+    -> ('Speed Racer', 'Logitech', 350.00, 5, 3),
+    -> ('VR World', 'Meta', 400.00, 4, 4),
+    -> ('Arcade Fun Box', 'Nintendo', 200.00, 7, 5),
+    -> ('Xbox Elite', 'Microsoft', 280.00, 6, 6);
+Query OK, 6 rows affected (0.01 sec)
+Records: 6  Duplicates: 0  Warnings: 0
+
+mysql> 
+mysql> INSERT INTO Staff
+    -> (staff_name, role_name, experience_years)
+    -> VALUES
+    -> ('Arjun', 'Manager', 5),
+    -> ('Suresh', 'Technician', 3),
+    -> ('Meghana', 'Receptionist', 4),
+    -> ('Rakesh', 'Support Staff', 2),
+    -> ('Divya', 'Supervisor', 6);
+Query OK, 5 rows affected (0.01 sec)
+Records: 5  Duplicates: 0  Warnings: 0
+
+mysql> 
+mysql> INSERT INTO Bookings
+    -> (gamer_id, system_id, staff_id,
+    -> booking_date, hours_booked, total_amount)
+    -> VALUES
+    -> (1, 1, 1, '2025-01-10', 2, 500.00),
+    -> (2, 2, 2, '2025-01-15', 3, 900.00),
+    -> (3, 4, 3, '2025-02-02', 1, 400.00),
+    -> (1, 3, 4, '2025-02-20', 2, 700.00),
+    -> (5, 6, 5, '2025-03-05', 4, 1120.00);
+Query OK, 5 rows affected (0.01 sec)
+Records: 5  Duplicates: 0  Warnings: 0
+
+mysql> 
+mysql> INSERT INTO Payments
+    -> (booking_id, payment_method, payment_status)
+    -> VALUES
+    -> (1, 'UPI', 'Completed'),
+    -> (2, 'Credit Card', 'Completed'),
+    -> (3, 'Cash', 'Pending'),
+    -> (4, 'UPI', 'Completed'),
+    -> (5, 'Debit Card', 'Completed');
+Query OK, 5 rows affected (0.01 sec)
+Records: 5  Duplicates: 0  Warnings: 0
+
+mysql> 
+mysql> INSERT INTO Feedback
+    -> (gamer_id, system_id, rating, review_message)
+    -> VALUES
+    -> (1, 1, 5, 'Excellent gaming experience'),
+    -> (2, 2, 4, 'High performance PCs'),
+    -> (3, 4, 5, 'Amazing VR setup'),
+    -> (5, 6, 4, 'Good atmosphere');
+Query OK, 4 rows affected (0.01 sec)
+Records: 4  Duplicates: 0  Warnings: 0
+
+mysql> 
+mysql> SELECT system_name, hourly_price
+    -> FROM Gaming_Systems
+    -> WHERE hourly_price > 250;
++-----------------+--------------+
+| system_name     | hourly_price |
++-----------------+--------------+
+| Gaming Beast PC |       300.00 |
+| Speed Racer     |       350.00 |
+| VR World        |       400.00 |
+| Xbox Elite      |       280.00 |
+| Gaming Beast PC |       300.00 |
+| Speed Racer     |       350.00 |
+| VR World        |       400.00 |
+| Xbox Elite      |       280.00 |
++-----------------+--------------+
+8 rows in set (0.00 sec)
+
+mysql> 
+mysql> SELECT gamer_name, gamer_city
+    -> FROM Gamers
+    -> WHERE gamer_city LIKE '%e';
++---------------+------------+
+| gamer_name    | gamer_city |
++---------------+------------+
+| Sunny Gowtham | Bangalore  |
+| Ravi Varma    | Pune       |
++---------------+------------+
+2 rows in set (0.00 sec)
+
+mysql> 
+mysql> SELECT system_name, available_units
+    -> FROM Gaming_Systems
+    -> WHERE available_units BETWEEN 5 AND 10;
++-----------------+-----------------+
+| system_name     | available_units |
++-----------------+-----------------+
+| PS5 Arena       |              10 |
+| Gaming Beast PC |               8 |
+| Speed Racer     |               5 |
+| Arcade Fun Box  |               7 |
+| Xbox Elite      |               6 |
+| PS5 Arena       |              10 |
+| Gaming Beast PC |               8 |
+| Speed Racer     |               5 |
+| Arcade Fun Box  |               7 |
+| Xbox Elite      |               6 |
++-----------------+-----------------+
+10 rows in set (0.00 sec)
+
+mysql> 
+mysql> SELECT *
+    -> FROM Game_Categories
+    -> WHERE category_name IN ('PlayStation', 'VR Gaming');
++-------------+---------------+
+| category_id | category_name |
++-------------+---------------+
+|           1 | PlayStation   |
+|           4 | VR Gaming     |
+|           7 | PlayStation   |
+|          10 | VR Gaming     |
++-------------+---------------+
+4 rows in set (0.00 sec)
+
+mysql> 
+mysql> SELECT COUNT(*) AS total_systems
+    -> FROM Gaming_Systems;
++---------------+
+| total_systems |
++---------------+
+|            12 |
++---------------+
+1 row in set (0.00 sec)
+
+mysql> 
+mysql> SELECT category_id,
+    -> AVG(hourly_price) AS average_price
+    -> FROM Gaming_Systems
+    -> GROUP BY category_id;
++-------------+---------------+
+| category_id | average_price |
++-------------+---------------+
+|           1 |    250.000000 |
+|           2 |    300.000000 |
+|           3 |    350.000000 |
+|           4 |    400.000000 |
+|           5 |    200.000000 |
+|           6 |    280.000000 |
++-------------+---------------+
+6 rows in set (0.00 sec)
+
+mysql> 
+mysql> SELECT MAX(available_units) AS maximum_units
+    -> FROM Gaming_Systems;
++---------------+
+| maximum_units |
++---------------+
+|            10 |
++---------------+
+1 row in set (0.00 sec)
+
+mysql> 
+mysql> SELECT gamer_id,
+    -> COUNT(booking_id) AS total_bookings
+    -> FROM Bookings
+    -> GROUP BY gamer_id;
++----------+----------------+
+| gamer_id | total_bookings |
++----------+----------------+
+|        1 |              4 |
+|        2 |              2 |
+|        3 |              2 |
+|        5 |              2 |
++----------+----------------+
+4 rows in set (0.00 sec)
+
+mysql> 
+mysql> SELECT g.system_name,
+    -> c.category_name
+    -> FROM Gaming_Systems g
+    -> JOIN Game_Categories c
+    -> ON g.category_id = c.category_id;
++-----------------+---------------+
+| system_name     | category_name |
++-----------------+---------------+
+| PS5 Arena       | PlayStation   |
+| Gaming Beast PC | PC Gaming     |
+| Speed Racer     | Racing        |
+| VR World        | VR Gaming     |
+| Arcade Fun Box  | Arcade        |
+| Xbox Elite      | Xbox          |
+| PS5 Arena       | PlayStation   |
+| Gaming Beast PC | PC Gaming     |
+| Speed Racer     | Racing        |
+| VR World        | VR Gaming     |
+| Arcade Fun Box  | Arcade        |
+| Xbox Elite      | Xbox          |
++-----------------+---------------+
+12 rows in set (0.00 sec)
+
+mysql> 
+mysql> SELECT gm.gamer_name,
+    -> b.booking_date
+    -> FROM Gamers gm
+    -> JOIN Bookings b
+    -> ON gm.gamer_id = b.gamer_id;
++-----------------+--------------+
+| gamer_name      | booking_date |
++-----------------+--------------+
+| Deekshith Kumar | 2025-01-10   |
+| Deekshith Kumar | 2025-02-20   |
+| Deekshith Kumar | 2025-01-10   |
+| Deekshith Kumar | 2025-02-20   |
+| Sangeetha Reddy | 2025-01-15   |
+| Sangeetha Reddy | 2025-01-15   |
+| Sunny Gowtham   | 2025-02-02   |
+| Sunny Gowtham   | 2025-02-02   |
+| Vidhyanjali     | 2025-03-05   |
+| Vidhyanjali     | 2025-03-05   |
++-----------------+--------------+
+10 rows in set (0.00 sec)
+
+mysql> 
+mysql> SELECT system_name, hourly_price
+    -> FROM Gaming_Systems
+    -> WHERE hourly_price >
+    -> (
+    ->     SELECT AVG(hourly_price)
+    ->     FROM Gaming_Systems
+    -> );
++-----------------+--------------+
+| system_name     | hourly_price |
++-----------------+--------------+
+| Gaming Beast PC |       300.00 |
+| Speed Racer     |       350.00 |
+| VR World        |       400.00 |
+| Gaming Beast PC |       300.00 |
+| Speed Racer     |       350.00 |
+| VR World        |       400.00 |
++-----------------+--------------+
+6 rows in set (0.00 sec)
+
+mysql> 
+mysql> SELECT gamer_name
+    -> FROM Gamers
+    -> WHERE gamer_id IN
+    -> (
+    ->     SELECT gamer_id
+    ->     FROM Bookings
+    ->     GROUP BY gamer_id
+    ->     HAVING COUNT(*) > 1
+    -> );
++-----------------+
+| gamer_name      |
++-----------------+
+| Deekshith Kumar |
+| Sangeetha Reddy |
+| Sunny Gowtham   |
+| Vidhyanjali     |
++-----------------+
+4 rows in set (0.00 sec)
+
+mysql> 
+mysql> SELECT * FROM Gamers;
++----------+-----------------+-----------------------+------------+-------------+
+| gamer_id | gamer_name      | gamer_email           | gamer_city | joined_date |
++----------+-----------------+-----------------------+------------+-------------+
+|        1 | Deekshith Kumar | deekshith@gmail.com   | Hyderabad  | 2024-01-10  |
+|        2 | Sangeetha Reddy | sangeetha@yahoo.com   | Chennai    | 2024-02-18  |
+|        3 | Sunny Gowtham   | sunny@outlook.com     | Bangalore  | 2024-03-12  |
+|        4 | Ravi Varma      | ravi@gmail.com        | Pune       | 2024-04-05  |
+|        5 | Vidhyanjali     | vidhyanjali@gmail.com | Vizag      | 2024-04-25  |
++----------+-----------------+-----------------------+------------+-------------+
+5 rows in set (0.00 sec)
+
+mysql> SELECT * FROM Game_Categories;
++-------------+---------------+
+| category_id | category_name |
++-------------+---------------+
+|           1 | PlayStation   |
+|           2 | PC Gaming     |
+|           3 | Racing        |
+|           4 | VR Gaming     |
+|           5 | Arcade        |
+|           6 | Xbox          |
+|           7 | PlayStation   |
+|           8 | PC Gaming     |
+|           9 | Racing        |
+|          10 | VR Gaming     |
+|          11 | Arcade        |
+|          12 | Xbox          |
++-------------+---------------+
+12 rows in set (0.00 sec)
+
+mysql> SELECT * FROM Gaming_Systems;
++-----------+-----------------+------------+--------------+-----------------+-------------+
+| system_id | system_name     | brand_name | hourly_price | available_units | category_id |
++-----------+-----------------+------------+--------------+-----------------+-------------+
+|         1 | PS5 Arena       | Sony       |       250.00 |              10 |           1 |
+|         2 | Gaming Beast PC | Asus       |       300.00 |               8 |           2 |
+|         3 | Speed Racer     | Logitech   |       350.00 |               5 |           3 |
+|         4 | VR World        | Meta       |       400.00 |               4 |           4 |
+|         5 | Arcade Fun Box  | Nintendo   |       200.00 |               7 |           5 |
+|         6 | Xbox Elite      | Microsoft  |       280.00 |               6 |           6 |
+|         7 | PS5 Arena       | Sony       |       250.00 |              10 |           1 |
+|         8 | Gaming Beast PC | Asus       |       300.00 |               8 |           2 |
+|         9 | Speed Racer     | Logitech   |       350.00 |               5 |           3 |
+|        10 | VR World        | Meta       |       400.00 |               4 |           4 |
+|        11 | Arcade Fun Box  | Nintendo   |       200.00 |               7 |           5 |
+|        12 | Xbox Elite      | Microsoft  |       280.00 |               6 |           6 |
++-----------+-----------------+------------+--------------+-----------------+-------------+
+12 rows in set (0.00 sec)
+
+mysql> SELECT * FROM Staff;
++----------+------------+---------------+------------------+
+| staff_id | staff_name | role_name     | experience_years |
++----------+------------+---------------+------------------+
+|        1 | Arjun      | Manager       |                5 |
+|        2 | Suresh     | Technician    |                3 |
+|        3 | Meghana    | Receptionist  |                4 |
+|        4 | Rakesh     | Support Staff |                2 |
+|        5 | Divya      | Supervisor    |                6 |
+|        6 | Arjun      | Manager       |                5 |
+|        7 | Suresh     | Technician    |                3 |
+|        8 | Meghana    | Receptionist  |                4 |
+|        9 | Rakesh     | Support Staff |                2 |
+|       10 | Divya      | Supervisor    |                6 |
++----------+------------+---------------+------------------+
+10 rows in set (0.00 sec)
+
+mysql> SELECT * FROM Bookings;
++------------+----------+-----------+----------+--------------+--------------+--------------+
+| booking_id | gamer_id | system_id | staff_id | booking_date | hours_booked | total_amount |
++------------+----------+-----------+----------+--------------+--------------+--------------+
+|          1 |        1 |         1 |        1 | 2025-01-10   |            2 |       500.00 |
+|          2 |        2 |         2 |        2 | 2025-01-15   |            3 |       900.00 |
+|          3 |        3 |         4 |        3 | 2025-02-02   |            1 |       400.00 |
+|          4 |        1 |         3 |        4 | 2025-02-20   |            2 |       700.00 |
+|          5 |        5 |         6 |        5 | 2025-03-05   |            4 |      1120.00 |
+|          6 |        1 |         1 |        1 | 2025-01-10   |            2 |       500.00 |
+|          7 |        2 |         2 |        2 | 2025-01-15   |            3 |       900.00 |
+|          8 |        3 |         4 |        3 | 2025-02-02   |            1 |       400.00 |
+|          9 |        1 |         3 |        4 | 2025-02-20   |            2 |       700.00 |
+|         10 |        5 |         6 |        5 | 2025-03-05   |            4 |      1120.00 |
++------------+----------+-----------+----------+--------------+--------------+--------------+
+10 rows in set (0.00 sec)
+
+mysql> SELECT * FROM Payments;
++------------+------------+----------------+----------------+
+| payment_id | booking_id | payment_method | payment_status |
++------------+------------+----------------+----------------+
+|          1 |          1 | UPI            | Completed      |
+|          2 |          2 | Credit Card    | Completed      |
+|          3 |          3 | Cash           | Pending        |
+|          4 |          4 | UPI            | Completed      |
+|          5 |          5 | Debit Card     | Completed      |
+|          6 |          1 | UPI            | Completed      |
+|          7 |          2 | Credit Card    | Completed      |
+|          8 |          3 | Cash           | Pending        |
+|          9 |          4 | UPI            | Completed      |
+|         10 |          5 | Debit Card     | Completed      |
++------------+------------+----------------+----------------+
+10 rows in set (0.00 sec)
+
+mysql> Terminal close -- exit!
